@@ -1,5 +1,6 @@
 package com.example.demo.paciente.service;
 
+import com.example.demo.jwt.TokenService;
 import com.example.demo.paciente.dto.PacienteCadastroDTO;
 import com.example.demo.paciente.repository.PacienteRepository;
 import com.example.demo.paciente.vo.PacienteVO;
@@ -8,6 +9,8 @@ import com.example.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,12 @@ public class PacienteService {
 
     @Autowired
     private PasswordEncoder fPasswordEncoder;
+
+    @Autowired
+    private AuthenticationManager fAuthenticationManager;
+
+    @Autowired
+    private TokenService fTokenService;
 
     public ResponseEntity<?> validar(PacienteCadastroDTO mDTO) {
         String mCpf = Util.formatarCPF(mDTO.getCpf());
@@ -94,4 +103,26 @@ public class PacienteService {
         }
     }
 
+    public ResponseEntity<?> login(String mEmail, String mSenha) {
+        if (mEmail.isEmpty() || mSenha.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ResponseApiUtil.response("Erro", "E-mail ou senha incorreto")
+            );
+        }
+
+        PacienteVO mPacienteVO = fRepository.findByEmail(mEmail);
+        if (mPacienteVO == null || !fPasswordEncoder.matches(mSenha, mPacienteVO.getSenha())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ResponseApiUtil.response("Erro", "E-mail ou senha incorreto")
+            );
+        }
+
+        var mToken = fTokenService.generateToken(mPacienteVO);
+
+        return ResponseEntity.ok(
+                ResponseApiUtil.response("Sucesso", "Login realizado com sucesso\nToken: " + mToken)
+        );
+
+
+}
 }

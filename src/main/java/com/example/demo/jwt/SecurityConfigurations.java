@@ -32,7 +32,7 @@ public class SecurityConfigurations {
                 .csrf(mCsrf -> mCsrf.disable())
                 .sessionManagement(mSession -> mSession.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/paciente/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/paciente/login", "/paciente/cadastrar").permitAll()
                         .anyRequest().authenticated()
                 )
 
