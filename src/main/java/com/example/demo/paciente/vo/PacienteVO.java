@@ -1,9 +1,11 @@
 package com.example.demo.paciente.vo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -26,21 +28,38 @@ public class PacienteVO implements UserDetails {
     private String senha;
 
     @Column(name = "pac_data_nascimento")
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
 
     @Column(name = "pac_cpf")
     private String cpf;
 
-    public PacienteVO(Long id, String nome, String email, String senha, Date dataNascimento, String cpf) {
+    @Column(name = "pac_sexo")
+    private String sexo;
+
+    public PacienteVO(Long id, String nome, String email, String senha, LocalDate dataNascimento, String cpf, String sexo) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.dataNascimento = dataNascimento;
         this.cpf = cpf;
+        this.sexo = sexo;
     }
 
     public PacienteVO(){}
+
+    @PrePersist
+    @PreUpdate
+    private void upperCase(){
+        if (nome != null)
+            nome = nome.toUpperCase();
+
+        if (email != null)
+            email = email.toUpperCase();
+
+        if (cpf != null)
+            cpf = cpf.toUpperCase();
+    }
 
     public Long getId() {
         return id;
@@ -74,11 +93,11 @@ public class PacienteVO implements UserDetails {
         this.senha = senha;
     }
 
-    public Date getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
@@ -90,11 +109,20 @@ public class PacienteVO implements UserDetails {
         this.cpf = cpf;
     }
 
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof PacienteVO that)) return false;
 
-        return id.equals(that.id) && nome.equals(that.nome) && email.equals(that.email) && senha.equals(that.senha) && dataNascimento.equals(that.dataNascimento) && cpf.equals(that.cpf);
+        return id.equals(that.id) && nome.equals(that.nome) && email.equals(that.email) && senha.equals(that.senha) &&
+                dataNascimento.equals(that.dataNascimento) && cpf.equals(that.cpf) && sexo.equals(that.sexo);
     }
 
     @Override
@@ -105,6 +133,7 @@ public class PacienteVO implements UserDetails {
         result = 31 * result + senha.hashCode();
         result = 31 * result + dataNascimento.hashCode();
         result = 31 * result + cpf.hashCode();
+        result = 31 * result + sexo.hashCode();
         return result;
     }
 
@@ -117,6 +146,7 @@ public class PacienteVO implements UserDetails {
                 ", senha='" + senha + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", cpf='" + cpf + '\'' +
+                ", sexo='" + sexo +
                 '}';
     }
 

@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.paciente.service.PacienteService;
 
 @RestController
-@RequestMapping("/com/example/demo/paciente")
+@RequestMapping("/paciente")
 public class PacienteRota {
     @Autowired
     private PacienteService fService;
 
     @PostMapping("/cadastrar")
-    private ResponseEntity<?> cadastrar(@RequestBody @Valid PacienteCadastroDTO mDTO){
+    public ResponseEntity<?> cadastrar(@Valid @RequestBody PacienteCadastroDTO mDTO){
         return fService.cadastrar(mDTO);
     }
 }

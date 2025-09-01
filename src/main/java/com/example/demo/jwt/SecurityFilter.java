@@ -23,23 +23,29 @@ public class SecurityFilter extends OncePerRequestFilter {
     PacienteRepository fPacienteRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest mRequest, HttpServletResponse mResponse, FilterChain mFilterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest mRequest, HttpServletResponse mResponse,
+                                    FilterChain mFilterChain) throws ServletException, IOException {
         String mPath = mRequest.getRequestURI();
-        if (mPath.equals("/user/login") || mPath.equals("/user/register")){
+
+        if (mPath.startsWith("/paciente/login") || mPath.startsWith("/paciente/cadastrar")) {
             mFilterChain.doFilter(mRequest, mResponse);
             return;
         }
 
         var mToken = this.recoverToken(mRequest);
-        if (mToken != null){
+        if (mToken != null) {
             var mEmail = fTokenService.validateToken(mToken);
             UserDetails mUser = fPacienteRepository.findByEmail(mEmail);
 
-            var mAuthentication = new UsernamePasswordAuthenticationToken(mUser, null, mUser.getAuthorities());
+            var mAuthentication = new UsernamePasswordAuthenticationToken(
+                    mUser,
+                    null,
+                    mUser.getAuthorities()
+            );
             SecurityContextHolder.getContext().setAuthentication(mAuthentication);
         }
-        mFilterChain.doFilter(mRequest, mResponse);
 
+        mFilterChain.doFilter(mRequest, mResponse);
     }
 
     private String recoverToken(HttpServletRequest mRequest){

@@ -31,10 +31,11 @@ public class SecurityConfigurations {
                 .cors(Customizer.withDefaults())
                 .csrf(mCsrf -> mCsrf.disable())
                 .sessionManagement(mSession -> mSession.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(mAuthorize -> mAuthorize
-                        .requestMatchers(HttpMethod.POST, "/paciente/login", "/paciente/cadastrar").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/paciente/**").permitAll()
                         .anyRequest().authenticated()
                 )
+
                 .exceptionHandling(mExeption -> mExeption
                         .authenticationEntryPoint(mCustomAuthenticationEntryPoint)
                 )

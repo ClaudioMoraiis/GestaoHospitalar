@@ -1,9 +1,11 @@
 package com.example.demo.paciente.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class PacienteCadastroDTO {
@@ -21,19 +23,25 @@ public class PacienteCadastroDTO {
     private String senha;
 
     @JsonProperty("dataNascimento")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @NotNull(message = "Campo 'dataNascimento' não informado no body, verifique!")
-    private Date dataNascimento;
+    private String dataNascimento;
 
     @JsonProperty("cpf")
     @NotNull(message = "Campo 'cpf' não informado no body, verifique!")
     private String cpf;
 
-    public PacienteCadastroDTO(String cpf, Date dataNascimento, String senha, String email, String nome) {
+    @JsonProperty("sexo")
+    @NotNull(message = "Campo 'sexo' não informado no body, verifique!")
+    private String sexo;
+
+    public PacienteCadastroDTO(String cpf, String dataNascimento, String senha, String email, String nome, String sexo) {
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
         this.senha = senha;
         this.email = email;
         this.nome = nome;
+        this.sexo = sexo;
     }
 
     public PacienteCadastroDTO(){}
@@ -62,11 +70,11 @@ public class PacienteCadastroDTO {
         this.senha = senha;
     }
 
-    public Date getDataNascimento() {
+    public String getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(String dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
@@ -78,11 +86,20 @@ public class PacienteCadastroDTO {
         this.cpf = cpf;
     }
 
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof PacienteCadastroDTO that)) return false;
 
-        return nome.equals(that.nome) && email.equals(that.email) && senha.equals(that.senha) && dataNascimento.equals(that.dataNascimento) && cpf.equals(that.cpf);
+        return nome.equals(that.nome) && email.equals(that.email) && senha.equals(that.senha) &&
+                dataNascimento.equals(that.dataNascimento) && cpf.equals(that.cpf) && sexo.equals(that.sexo);
     }
 
     @Override
@@ -92,6 +109,7 @@ public class PacienteCadastroDTO {
         result = 31 * result + senha.hashCode();
         result = 31 * result + dataNascimento.hashCode();
         result = 31 * result + cpf.hashCode();
+        result = 31 * result + sexo.hashCode();
         return result;
     }
 
@@ -103,6 +121,7 @@ public class PacienteCadastroDTO {
                 ", senha='" + senha + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", cpf='" + cpf + '\'' +
+                ", sexo='" + sexo + '\'' +
                 '}';
     }
 }
